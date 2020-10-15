@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 02d8b49e186e64853a6b1a42881ffe46
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - handcardPrefab: {instanceID: 0}
+  - fieldcardPrefab: {instanceID: 0}
+  - fieldPrefab: {instanceID: 0}
+  - playerHandTransform: {instanceID: 0}
+  - enemyHandTransform: {instanceID: 0}
+  - redFieldTransform: {instanceID: 0}
+  - blackFieldTransform: {instanceID: 0}
+  - MulliganHandTransform: {instanceID: 0}
+  - MulliganChangeTransform: {instanceID: 0}
+  - MulliganChangeButton: {instanceID: 0}
+  - TurnText: {instanceID: 0}
+  - ResultText: {instanceID: 0}
+  - Canvas: {instanceID: 0}
+  - MulliganCanvas: {instanceID: 0}
+  - ResultCanvas: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

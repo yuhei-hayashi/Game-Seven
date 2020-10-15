@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc27146b501e4ff3972254b3893fa79, type: 3}
+  m_Name: Card 18
+  m_EditorClassIdentifier: 
+  id: 18
+  color: black
+  mark: club
+  number: 5
+  icon: {fileID: 21300000, guid: 608621734d9e943c0a2704280585f0b1, type: 3}
