@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] Button MulliganChangeButton;
     [SerializeField] Text TurnText,
                           ResultText;
+    [SerializeField]  Image BackImage;
+
     [SerializeField] GameObject Canvas,
                                 MulliganCanvas,
                                 ResultCanvas;
@@ -135,7 +137,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         while(n > i)
         {
             CardList[i].transform.SetParent(Parent,false);
-            photonView.RPC(nameof(GiveCardEnemyHand),RpcTarget.Others,PhotonNetwork.LocalPlayer.ActorNumber);
+            int cardID = CardList[i].model.id;
+            photonView.RPC(nameof(GiveCardEnemyHand),RpcTarget.Others,PhotonNetwork.LocalPlayer.ActorNumber,cardID);
             i++;
         }
     }
@@ -288,19 +291,22 @@ public class GameManager : MonoBehaviourPunCallbacks
         int cardID = deck[0];
         deck.RemoveAt(0);
         CreateCard(cardID,hand,PhotonNetwork.LocalPlayer.ActorNumber);
-        photonView.RPC(nameof(GiveCardEnemyHand),RpcTarget.Others,PhotonNetwork.LocalPlayer.ActorNumber);
+        photonView.RPC(nameof(GiveCardEnemyHand),RpcTarget.Others,PhotonNetwork.LocalPlayer.ActorNumber,cardID);
     }
     [PunRPC]
-    public void GiveCardEnemyHand(int ownerID)
+    public void GiveCardEnemyHand(int ownerID,int cardID)
     {
         List<int> deck = enemyDeck;
         if(deck.Count == 0)
         {
             return;
         }
-        int cardID = deck[0];
         deck.RemoveAt(0);
         CreateCard(cardID,enemyHandTransform,ownerID);
+        CardController[] EnemyCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        int n = EnemyCardList.Length - 1;
+        CardController card = EnemyCardList[n];
+        card.view.Show(BackImage.sprite);
     }
         void CreateCard(int cardID,Transform hand,int ownerID)
     {

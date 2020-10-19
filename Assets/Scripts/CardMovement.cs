@@ -14,10 +14,10 @@ public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IE
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
         if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
         {
-        siblingIndex = transform.GetSiblingIndex();
-        defaultParent = transform.parent;
-        transform.SetParent(defaultParent.parent , false);
-        GetComponent<CanvasGroup>().blocksRaycasts = false;
+            siblingIndex = transform.GetSiblingIndex();
+            defaultParent = transform.parent;
+            transform.SetParent(defaultParent.parent , false);
+            GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
     }
     public void OnDrag(PointerEventData eventData)
@@ -25,7 +25,7 @@ public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IE
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
         if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
         {
-        transform.position = eventData.position;
+            transform.position = eventData.position;
         }
     }
 
@@ -38,5 +38,14 @@ public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IE
         GetComponent<CanvasGroup>().blocksRaycasts = true;
         transform.SetSiblingIndex(siblingIndex);
         }
+    }
+
+    private IEnumerator DelayMethod(int delayFrameCount, System.Action action)
+    {
+        for (var i = 0; i < delayFrameCount; i++)
+        {
+            yield return null;
+        }
+        action();
     }
 }

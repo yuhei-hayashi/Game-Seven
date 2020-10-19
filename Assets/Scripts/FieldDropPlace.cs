@@ -12,6 +12,7 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
     {
         FieldController[] fieldList = this.transform.parent.GetComponentsInChildren<FieldController>();
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
+        CardMovement cardMovement = eventData.pointerDrag.GetComponent<CardMovement>();
         FieldController field = GetComponent<FieldController>();
         if((card != null) && (field.model.color == card.model.color) && (card.model.number == field.model.num))
         {
@@ -19,11 +20,12 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
           {
             if(fieldList[0].model.cards >= 1 || fieldList[11].model.cards >= 1)
             {
+              card.clickedGameObject = null;
               this.transform.localScale = new Vector3( 1 , 1 , 0 );
               int cardID = card.model.id;
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
               Destroy(card.gameObject);
-              GameManager.instance.DiscardEnemyHandNetwork(0);
+              GameManager.instance.DiscardEnemyHandNetwork(cardMovement.siblingIndex);
               GameManager.instance.CheckWin(this.transform.parent);
               GameManager.instance.ChangeTurnNetwork();
             }
@@ -32,11 +34,12 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
           {
             if(fieldList[12].model.cards >= 1 || fieldList[1].model.cards >= 1)
             {
+              card.clickedGameObject = null;
               this.transform.localScale = new Vector3( 1 , 1 , 0 );
               int cardID = card.model.id;
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
               Destroy(card.gameObject);
-              GameManager.instance.DiscardEnemyHandNetwork(0);
+              GameManager.instance.DiscardEnemyHandNetwork(cardMovement.siblingIndex);
               GameManager.instance.CheckWin(this.transform.parent);
               GameManager.instance.ChangeTurnNetwork();
             }
@@ -45,11 +48,12 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
           {
             if(fieldList[field.model.num].model.cards >= 1 || fieldList[(field.model.num - 2)].model.cards >= 1)
             {
+              card.clickedGameObject = null;
               this.transform.localScale = new Vector3( 1 , 1 , 0 );
               int cardID = card.model.id;
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
               Destroy(card.gameObject);
-              GameManager.instance.DiscardEnemyHandNetwork(0);
+              GameManager.instance.DiscardEnemyHandNetwork(cardMovement.siblingIndex);
               GameManager.instance.CheckWin(this.transform.parent);
               GameManager.instance.ChangeTurnNetwork();
             }

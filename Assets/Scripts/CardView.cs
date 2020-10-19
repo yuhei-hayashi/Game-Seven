@@ -7,8 +7,9 @@ using UnityEngine.UI;
 public class CardView : MonoBehaviour
 {
     [SerializeField]  Image iconImage;
-   public void Show(CardModel cardModel)
+
+   public void Show(Sprite image)
     {
-        iconImage.sprite = cardModel.icon;
+        iconImage.sprite = image;
     }
 }
