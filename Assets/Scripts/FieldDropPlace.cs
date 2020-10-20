@@ -20,7 +20,7 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
           {
             if(fieldList[0].model.cards >= 1 || fieldList[11].model.cards >= 1)
             {
-              card.clickedGameObject = null;
+              GameManager.instance.clickedCard = null;
               this.transform.localScale = new Vector3( 1 , 1 , 0 );
               int cardID = card.model.id;
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
@@ -34,7 +34,7 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
           {
             if(fieldList[12].model.cards >= 1 || fieldList[1].model.cards >= 1)
             {
-              card.clickedGameObject = null;
+              GameManager.instance.clickedCard = null;
               this.transform.localScale = new Vector3( 1 , 1 , 0 );
               int cardID = card.model.id;
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
@@ -48,7 +48,7 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
           {
             if(fieldList[field.model.num].model.cards >= 1 || fieldList[(field.model.num - 2)].model.cards >= 1)
             {
-              card.clickedGameObject = null;
+              GameManager.instance.clickedCard = null;
               this.transform.localScale = new Vector3( 1 , 1 , 0 );
               int cardID = card.model.id;
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);

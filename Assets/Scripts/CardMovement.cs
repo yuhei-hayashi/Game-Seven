@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IEndDragHandler
+public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IEndDragHandler , IPointerClickHandler
 {
     public Transform defaultParent;
     public int siblingIndex;
@@ -39,13 +39,10 @@ public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IE
         transform.SetSiblingIndex(siblingIndex);
         }
     }
-
-    private IEnumerator DelayMethod(int delayFrameCount, System.Action action)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        for (var i = 0; i < delayFrameCount; i++)
-        {
-            yield return null;
-        }
-        action();
+        GameManager.instance.clickedCard = eventData.pointerDrag.GetComponent<CardController>();
+        Debug.Log(GameManager.instance.clickedCard.model.id);
     }
+
 }

@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 isPlayerMulligan,
                 isEnemyMulligan,
                 isMulliganTurn;
+    public CardController clickedCard;
     List<int> playerDeck = new List<int>();
     List<int> enemyDeck  = new List<int>();
 
