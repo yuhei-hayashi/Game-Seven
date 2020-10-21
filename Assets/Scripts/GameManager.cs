@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                                redFieldTransform,
                                blackFieldTransform,
                                MulliganHandTransform,
-                               MulliganChangeTransform;
+                               MulliganChangeTransform,
+                               EffectFieldTransform;
 
     [SerializeField] Button MulliganChangeButton;
     [SerializeField] Text TurnText,
@@ -25,7 +26,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField] GameObject Canvas,
                                 MulliganCanvas,
-                                ResultCanvas;
+                                ResultCanvas,
+                                EffectCanvas;
     public bool isPlayerTurn,
                 isPlayerMulligan,
                 isEnemyMulligan,
@@ -33,6 +35,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public CardController clickedCard;
     List<int> playerDeck = new List<int>();
     List<int> enemyDeck  = new List<int>();
+
+    public Dictionary<int,System.Action> cardEffect = new Dictionary<int,System.Action>();
 
     public static GameManager instance;
         private void Awake()
@@ -50,6 +54,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         Canvas.SetActive(false);
         MulliganCanvas.SetActive(false);
         ResultCanvas.SetActive(false);
+        EffectCanvas.SetActive(false);
     }
 
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
@@ -354,7 +359,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if(isPlayerTurn)
         {
-        GiveCardToHand(playerDeck,playerHandTransform);
         photonView.RPC(nameof(ChangeTurn), RpcTarget.All);
         }
     }
@@ -450,4 +454,82 @@ public class GameManager : MonoBehaviourPunCallbacks
         ResultCanvas.SetActive(true);
     }
 
+        public void EffectInstall()
+    {
+        cardEffect.Add(1,Spade1);
+        cardEffect.Add(2,Spade2);
+    }
+
+     void Spade1()
+    {
+        photonView.RPC(nameof(ExtraTurn), RpcTarget.All);
+    }
+
+    void Spade2()
+    {
+        CardController[] playerCardList = playerHandTransform.GetComponentsInChildren<CardController>();
+        int n = playerCardList.Length;
+        while(n < 7)
+        {
+            GiveCardToHand(playerDeck,playerHandTransform);
+            n = playerCardList.Length;
+        }
+    }
+
+    void Spade3()
+    {
+        EffectCanvas.SetActive(true);
+        List<int> deck = playerDeck;
+        while(deck.Count > 0)
+        {
+            int cardID = deck[0];
+            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+            deck.RemoveAt(0);
+        }
+        StartCoroutine(CardSelect(()=>
+        {
+            CardSearch();
+            EffectCanvas.SetActive(false);
+        }));
+    }
+
+
+        [PunRPC]
+    void ExtraTurn()
+    {
+        isPlayerTurn = !isPlayerTurn;
+    }
+
+    IEnumerator CardSelect(System.Action action)
+    {
+        yield return StartCoroutine(SelectWait() );
+        action();
+    }
+
+    IEnumerator SelectWait()
+    {
+        while ( clickedCard == null )
+        {
+            yield return new WaitForEndOfFrame ();
+        }
+        yield return null;
+    }
+
+    void CardSearch()
+    {
+        clickedCard.transform.SetParent(playerHandTransform,false);
+        photonView.RPC(nameof(GiveCardEnemyHand),RpcTarget.Others,PhotonNetwork.LocalPlayer.ActorNumber,clickedCard.model.id);
+        returnDeck(playerDeck);
+        Shuffle(playerDeck);
+    }
+
+    void returnDeck(List<int> deck)
+    {
+        CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+        while(CardList.Length > 0)
+        {
+            deck.Add(CardList[0].model.id);
+            Destroy(CardList[0].gameObject);
+        }
+    }
 }

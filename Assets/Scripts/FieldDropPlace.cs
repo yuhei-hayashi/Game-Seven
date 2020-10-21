@@ -8,6 +8,7 @@ using Photon.Realtime;
 
 public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointerEnterHandler ,IPointerExitHandler
 {
+
   public void OnDrop(PointerEventData eventData)
     {
         FieldController[] fieldList = this.transform.parent.GetComponentsInChildren<FieldController>();
