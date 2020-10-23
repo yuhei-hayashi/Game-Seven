@@ -45,6 +45,14 @@ MonoBehaviour:
   - MyTurn
   - StartGame
   - ExtraTurn
+  - EnemyExtraTurn
+  - EnemyHandDestraction
+  - HandDestraction
+  - GiveCardToHandNetwork
+  - CreateEnemyDecktop
+  - DecktopSend
+  - SendDeckbuttom
+  - SendDecktop
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -31,7 +31,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     public bool isPlayerTurn,
                 isPlayerMulligan,
                 isEnemyMulligan,
-                isMulliganTurn;
+                isMulliganTurn,
+                isEffect;
+
+    public int CountExtraTurn,
+               CountEnemyExtraTurn;
     public CardController clickedCard;
     List<int> playerDeck = new List<int>();
     List<int> enemyDeck  = new List<int>();
@@ -82,6 +86,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private IEnumerator StartGame()
     {
+            EffectInstall();
             Canvas.SetActive(true);
             SettingFieldzone(blackFieldTransform);
             SettingFieldzone(redFieldTransform);
@@ -373,7 +378,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ChangeTurn()
     {
-        isPlayerTurn = !isPlayerTurn;
+        if(CountExtraTurn >= 1 && isPlayerTurn)
+        {
+            CountExtraTurn--;
+        }
+        else if(CountEnemyExtraTurn >= 1 && !isPlayerTurn)
+        {
+            CountEnemyExtraTurn--;
+        }
+        else
+        {
+            isPlayerTurn = !isPlayerTurn;
+        }
         if(isPlayerTurn)
         {
             GiveCardToHand(playerDeck,playerHandTransform);
@@ -454,15 +470,45 @@ public class GameManager : MonoBehaviourPunCallbacks
         ResultCanvas.SetActive(true);
     }
 
-        public void EffectInstall()
+    public void EffectInstall()
     {
         cardEffect.Add(1,Spade1);
         cardEffect.Add(2,Spade2);
+        cardEffect.Add(3,Spade3);
+        cardEffect.Add(4,Spade4);
+        cardEffect.Add(5,Spade5);
+        cardEffect.Add(6,Spade6);
+        cardEffect.Add(8,Spade8);
+        cardEffect.Add(9,Spade9);
+        cardEffect.Add(10,Spade10);
+        cardEffect.Add(11,Spade12);
+        cardEffect.Add(12,Spade12);
+        cardEffect.Add(13,Spade13);
+        cardEffect.Add(40,Heart1);
+        cardEffect.Add(41,Heart2);
+        cardEffect.Add(42,Heart3);
+        cardEffect.Add(43,Heart4);
+        cardEffect.Add(44,Heart5);
+        cardEffect.Add(45,Heart6);
+        cardEffect.Add(47,Heart8);
+        cardEffect.Add(48,Heart9);
+        cardEffect.Add(49,Heart10);
+        cardEffect.Add(50,Heart11);
+        cardEffect.Add(51,Heart12);
+        cardEffect.Add(52,Heart13);
+    }
+
+    public void CallEffect(int cardID)
+    {
+        System.Action action = cardEffect[cardID];
+        action();
     }
 
      void Spade1()
     {
-        photonView.RPC(nameof(ExtraTurn), RpcTarget.All);
+        CountExtraTurn = 1;
+        photonView.RPC(nameof(EnemyExtraTurn),RpcTarget.Others);
+        isEffect = false;
     }
 
     void Spade2()
@@ -472,8 +518,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         while(n < 7)
         {
             GiveCardToHand(playerDeck,playerHandTransform);
-            n = playerCardList.Length;
+            n++;
         }
+        isEffect = false;
     }
 
     void Spade3()
@@ -489,15 +536,351 @@ public class GameManager : MonoBehaviourPunCallbacks
         StartCoroutine(CardSelect(()=>
         {
             CardSearch();
+            returnDeck(playerDeck);
+            clickedCard = null;
             EffectCanvas.SetActive(false);
+            isEffect = false;
+        }));
+    }
+
+    void Spade4()
+    {
+        List<int> deck = playerDeck;
+        GiveCardToHand(playerDeck,playerHandTransform);
+        GiveCardToHand(playerDeck,playerHandTransform);
+        StartCoroutine(CardSelect(()=>
+        {
+            int HandPosition = clickedCard.transform.GetSiblingIndex();
+            HandDestraction(HandPosition);
+            clickedCard = null;
+            StartCoroutine(CardSelect(()=>
+            {
+                HandPosition = clickedCard.transform.GetSiblingIndex();
+                HandDestraction(HandPosition);
+                isEffect = false;
+            }));
+        }));
+    }
+
+    void Spade5()
+    {
+        List<int> deck = playerDeck;
+        GiveCardToHand(playerDeck,playerHandTransform);
+        StartCoroutine(CardSelect(()=>
+        {
+            int HandPosition = clickedCard.transform.GetSiblingIndex();
+            HandDestraction(HandPosition);
+            isEffect = false;
+        }));
+    }
+
+    void Spade6()
+    {
+        EffectCanvas.SetActive(true);
+        List<int> deck = playerDeck;
+        int n = 0;
+        while(n < 2)
+        {
+            int cardID = deck[0];
+            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+            deck.RemoveAt(0);
+            n++;
+        }
+        StartCoroutine(CardSelect(()=>
+        {
+            deck.Insert(0,clickedCard.model.id);
+            int Position = clickedCard.transform.GetSiblingIndex();
+            CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+            clickedCard = null;
+            if(Position == 0)
+            {
+                deck.Add(CardList[1].model.id);
+            }
+            else
+            {
+                deck.Add(CardList[0].model.id);
+            }
+            EffectFieldCardLost();
+            EffectCanvas.SetActive(false);
+            isEffect = false;
+        }));
+    }
+
+    void Spade8()
+    {
+        EffectCanvas.SetActive(true);
+        List<int> deck = playerDeck;
+        int n = 0;
+        while(n < 2)
+        {
+            int cardID = deck[0];
+            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+            deck.RemoveAt(0);
+            n++;
+        }
+        StartCoroutine(CardSelect(()=>
+        {
+            deck.Insert(0,clickedCard.model.id);
+            int Position = clickedCard.transform.GetSiblingIndex();
+            CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+            clickedCard = null;
+            if(Position == 0)
+            {
+                deck.Add(CardList[1].model.id);
+            }
+            else
+            {
+                deck.Add(CardList[0].model.id);
+            }
+            EffectFieldCardLost();
+            EffectCanvas.SetActive(false);
+            isEffect = false;
+        }));
+    }
+
+    void Spade9()
+    {
+        List<int> deck = playerDeck;
+        GiveCardToHand(playerDeck,playerHandTransform);
+        StartCoroutine(CardSelect(()=>
+        {
+            int HandPosition = clickedCard.transform.GetSiblingIndex();
+            HandDestraction(HandPosition);
+            isEffect = false;
+        }));
+    }
+
+    void Spade10()
+    {
+        GiveCardToHand(playerDeck,playerHandTransform);
+        isEffect = false;
+    }
+
+    void Spade11()
+    {
+        GiveCardToHand(playerDeck,playerHandTransform);
+        GiveCardToHand(playerDeck,playerHandTransform);
+        isEffect = false;
+    }
+
+    void Spade12()
+    {
+        GiveCardToHand(playerDeck,playerHandTransform);
+        GiveCardToHand(playerDeck,playerHandTransform);
+        GiveCardToHand(playerDeck,playerHandTransform);
+        isEffect = false;
+    }
+
+    void Spade13()
+    {
+        EffectCanvas.SetActive(true);
+        List<int> deck = playerDeck;
+        int cardID = 0;
+        while(deck.Count > 0)
+        {
+            cardID = deck[0];
+            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+            deck.RemoveAt(0);
+        }
+        StartCoroutine(CardSelect(()=>
+        {
+            CardSearch();
+            clickedCard = null;
+            StartCoroutine(CardSelect(()=>
+            {
+                CardSearch();
+                returnDeck(playerDeck);
+                clickedCard = null;
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
+        }));
+    }
+
+    void Heart1()
+    {
+        CountExtraTurn = 1;
+        photonView.RPC(nameof(EnemyExtraTurn),RpcTarget.Others);
+        isEffect = false;
+    }
+
+    void Heart2()
+    {
+        CardController[] EnemyCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        int n = EnemyCardList.Length;
+        int i = n;
+        while(n > 0)
+        {
+            n--;
+            photonView.RPC(nameof(HandDestraction),RpcTarget.Others,n);
+        }
+        while(i > 1)
+        {
+            i--;
+            photonView.RPC(nameof(GiveCardToHandNetwork),RpcTarget.Others);
+        }
+        isEffect = false;
+    }
+
+    void Heart3()
+    {
+        EffectCanvas.SetActive(true);
+        CardController[] EnemyCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        int n = EnemyCardList.Length;
+        int i = 0;
+        while(n > i)
+        {
+            CreateCard(EnemyCardList[i].model.id,EffectFieldTransform,99);
+            i++;
+        }
+        StartCoroutine(CardSelect(()=>
+            {
+                PeepingHandDestraction();
+                EffectFieldCardLost();
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
+    }
+
+    void Heart4()
+    {
+        RandomHandDestraction();
+        isEffect = false;
+    }
+
+    void Heart5()
+    {
+        RandomHandDestraction();
+        photonView.RPC(nameof(GiveCardToHandNetwork),RpcTarget.Others);
+        isEffect = false;
+    }
+
+    void Heart6()
+    {
+        EffectCanvas.SetActive(true);
+        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+        StartCoroutine(CardSelect(()=>
+            {
+                int cardID = clickedCard.model.id;
+                photonView.RPC(nameof(SendDecktop),RpcTarget.Others,cardID);
+                int Position = clickedCard.transform.GetSiblingIndex();
+                CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+                clickedCard = null;
+                if(Position == 0)
+                {
+                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[1].model.id);
+                }
+                else
+                {
+                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[0].model.id);
+                }
+                EffectFieldCardLost();
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
+    }
+
+    void Heart8()
+    {
+        EffectCanvas.SetActive(true);
+        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+        StartCoroutine(CardSelect(()=>
+            {
+                int cardID = clickedCard.model.id;
+                photonView.RPC(nameof(SendDecktop),RpcTarget.Others,cardID);
+                int Position = clickedCard.transform.GetSiblingIndex();
+                CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+                clickedCard = null;
+                if(Position == 0)
+                {
+                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[1].model.id);
+                }
+                else
+                {
+                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[0].model.id);
+                }
+                EffectFieldCardLost();
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
+    }
+
+    void Heart9()
+    {
+        RandomHandDestraction();
+        photonView.RPC(nameof(GiveCardToHandNetwork),RpcTarget.Others);
+        isEffect = false;
+    }
+
+    void Heart10()
+    {
+        EffectCanvas.SetActive(true);
+        CardController[] EnemyCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        int n = EnemyCardList.Length;
+        int i = 0;
+        while(n > i)
+        {
+            CreateCard(EnemyCardList[i].model.id,EffectFieldTransform,99);
+            i++;
+        }
+        StartCoroutine(CardSelect(()=>
+            {
+                PeepingHandDestraction();
+                EffectFieldCardLost();
+                photonView.RPC(nameof(GiveCardToHandNetwork),RpcTarget.Others);
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
+    }
+
+    void Heart11()
+    {
+        RandomHandDestraction();
+        RandomHandDestraction();
+        isEffect = false;
+    }
+
+    void Heart12()
+    {
+        RandomHandDestraction();
+        RandomHandDestraction();
+        RandomHandDestraction();
+        isEffect = false;
+    }
+
+    void Heart13()
+    {
+        EffectCanvas.SetActive(true);
+        CardController[] EnemyCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        int n = EnemyCardList.Length;
+        int i = 0;
+        while(n > i)
+        {
+            CreateCard(EnemyCardList[i].model.id,EffectFieldTransform,99);
+            i++;
+        }
+        StartCoroutine(CardSelect(()=>
+        {
+            PeepingHandDestraction();
+            StartCoroutine(CardSelect(()=>
+            {
+                PeepingHandDestraction();
+                EffectFieldCardLost();
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
         }));
     }
 
 
-        [PunRPC]
-    void ExtraTurn()
+
+
+    [PunRPC]
+    void EnemyExtraTurn()
     {
-        isPlayerTurn = !isPlayerTurn;
+        CountEnemyExtraTurn = 1;
     }
 
     IEnumerator CardSelect(System.Action action)
@@ -519,17 +902,99 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         clickedCard.transform.SetParent(playerHandTransform,false);
         photonView.RPC(nameof(GiveCardEnemyHand),RpcTarget.Others,PhotonNetwork.LocalPlayer.ActorNumber,clickedCard.model.id);
-        returnDeck(playerDeck);
-        Shuffle(playerDeck);
     }
 
     void returnDeck(List<int> deck)
     {
         CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
-        while(CardList.Length > 0)
+        int n = CardList.Length;
+        while(n > 0)
         {
-            deck.Add(CardList[0].model.id);
-            Destroy(CardList[0].gameObject);
+            n--;
+            deck.Add(CardList[n].model.id);
+            Destroy(CardList[n].gameObject);
         }
+        Shuffle(playerDeck);
+    }
+
+    [PunRPC]
+    void HandDestraction(int i)
+    {
+            List<int> deck = playerDeck;
+            CardController card = playerHandTransform.GetComponentsInChildren<CardController>()[i];
+            deck.Add(card.model.id);
+            clickedCard = null;
+            Destroy(card.gameObject);
+            photonView.RPC(nameof(EnemyHandDestraction),RpcTarget.Others,i);
+            Shuffle(deck);
+    }
+
+    [PunRPC]
+    void EnemyHandDestraction(int i)
+    {
+        CardController card = enemyHandTransform.GetComponentsInChildren<CardController>()[i];
+        Destroy(card.gameObject);
+        enemyDeck.Add(0);
+    }
+
+    [PunRPC]
+    void GiveCardToHandNetwork()
+    {
+        GiveCardToHand(playerDeck,playerHandTransform);
+    }
+
+    void EffectFieldCardLost()
+    {
+        CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+        int n = CardList.Length;
+        while(n > 0)
+        {
+            n--;
+            Destroy(CardList[n].gameObject);
+        }
+    }
+
+    void RandomHandDestraction()
+    {
+        CardController[] EnemyCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        int n = EnemyCardList.Length;
+        int Random_num = UnityEngine.Random.Range(0,n);
+        photonView.RPC(nameof(HandDestraction),RpcTarget.Others,Random_num);
+    }
+
+    void PeepingHandDestraction()
+    {
+        int HandPosition = clickedCard.transform.GetSiblingIndex();
+        clickedCard = null;
+        CardController card = EffectFieldTransform.GetComponentsInChildren<CardController>()[HandPosition];
+        Destroy(card.gameObject);
+        photonView.RPC(nameof(HandDestraction),RpcTarget.Others,HandPosition);
+    }
+
+    [PunRPC]
+    void DecktopSend()
+    {
+        int cardID = playerDeck[0];
+        int ownerID = PhotonNetwork.LocalPlayer.ActorNumber;
+        playerDeck.RemoveAt(0);
+        photonView.RPC(nameof(CreateEnemyDecktop),RpcTarget.Others,ownerID,cardID);
+    }
+
+    [PunRPC]
+    void CreateEnemyDecktop(int ownerID, int cardID)
+    {
+        CreateCard(cardID,EffectFieldTransform,ownerID);
+    }
+
+    [PunRPC]
+    void SendDecktop(int cardID)
+    {
+        playerDeck.Insert(0,cardID);
+    }
+
+    [PunRPC]
+    void SendDeckbuttom(int cardID)
+    {
+        playerDeck.Add(cardID);
     }
 }

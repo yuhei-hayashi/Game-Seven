@@ -27,8 +27,13 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
               Destroy(card.gameObject);
               GameManager.instance.DiscardEnemyHandNetwork(cardMovement.siblingIndex);
-              GameManager.instance.CheckWin(this.transform.parent);
-              GameManager.instance.ChangeTurnNetwork();
+              GameManager.instance.isEffect = true;
+              GameManager.instance.CallEffect(cardID);
+              StartCoroutine(EffectDo(() =>
+              {
+                GameManager.instance.CheckWin(this.transform.parent);
+                GameManager.instance.ChangeTurnNetwork();
+              }));
             }
           }
           else if(field.model.num == 1)
@@ -41,8 +46,13 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
               Destroy(card.gameObject);
               GameManager.instance.DiscardEnemyHandNetwork(cardMovement.siblingIndex);
-              GameManager.instance.CheckWin(this.transform.parent);
-              GameManager.instance.ChangeTurnNetwork();
+              GameManager.instance.isEffect = true;
+              GameManager.instance.CallEffect(cardID);
+              StartCoroutine(EffectDo(() =>
+              {
+                GameManager.instance.CheckWin(this.transform.parent);
+                GameManager.instance.ChangeTurnNetwork();
+              }));
             }
           }
           else
@@ -55,8 +65,13 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
               GameManager.instance.CreateFieldCardNetwork(cardID,field.model.id,field.model.color);
               Destroy(card.gameObject);
               GameManager.instance.DiscardEnemyHandNetwork(cardMovement.siblingIndex);
-              GameManager.instance.CheckWin(this.transform.parent);
-              GameManager.instance.ChangeTurnNetwork();
+              GameManager.instance.isEffect = true;
+              GameManager.instance.CallEffect(cardID);
+              StartCoroutine(EffectDo(() =>
+              {
+                GameManager.instance.CheckWin(this.transform.parent);
+                GameManager.instance.ChangeTurnNetwork();
+              }));
             }
           }
         }
@@ -90,7 +105,7 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
             }
             else if(field.model.num == 1)
             {
-              if(fieldList[0].model.cards >= 1 || fieldList[11].model.cards >= 1)
+              if(fieldList[1].model.cards >= 1 || fieldList[12].model.cards >= 1)
               {
                 if(field.model.cards == 0)
                 {
@@ -127,5 +142,20 @@ public class FieldDropPlace : MonoBehaviourPunCallbacks , IDropHandler , IPointe
     {
       this.transform.localScale = new Vector3( 1 , 1 , 0 );
       this.gameObject.GetComponent<Image>().color = new Color(0,0,0,0);
+    }
+
+    IEnumerator EffectDo(System.Action action)
+    {
+        yield return StartCoroutine(EffectWait());
+        action();
+    }
+
+    IEnumerator EffectWait()
+    {
+        while (GameManager.instance.isEffect)
+        {
+            yield return new WaitForEndOfFrame ();
+        }
+        yield return null;
     }
 }

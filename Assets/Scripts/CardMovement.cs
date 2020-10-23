@@ -12,31 +12,40 @@ public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IE
     public void OnBeginDrag(PointerEventData eventData)
     {
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
-        if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
+        if(!GameManager.instance.isEffect)
         {
-            siblingIndex = transform.GetSiblingIndex();
-            defaultParent = transform.parent;
-            transform.SetParent(defaultParent.parent , false);
-            GetComponent<CanvasGroup>().blocksRaycasts = false;
+            if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+                siblingIndex = transform.GetSiblingIndex();
+                defaultParent = transform.parent;
+                transform.SetParent(defaultParent.parent , false);
+                GetComponent<CanvasGroup>().blocksRaycasts = false;
+            }
         }
     }
     public void OnDrag(PointerEventData eventData)
     {
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
-        if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
+        if(!GameManager.instance.isEffect)
         {
-            transform.position = eventData.position;
+            if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+                transform.position = eventData.position;
+            }
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
-        if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
+        if(!GameManager.instance.isEffect)
         {
-        transform.SetParent(defaultParent , false);
-        GetComponent<CanvasGroup>().blocksRaycasts = true;
-        transform.SetSiblingIndex(siblingIndex);
+            if((GameManager.instance.isPlayerTurn || GameManager.instance.isPlayerMulligan) && card.model.owner_id == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+            transform.SetParent(defaultParent , false);
+            GetComponent<CanvasGroup>().blocksRaycasts = true;
+            transform.SetSiblingIndex(siblingIndex);
+            }
         }
     }
     public void OnPointerClick(PointerEventData eventData)
