@@ -41,7 +41,7 @@
 # カードの効果
 
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 数 | 効果 |
-| ---------- | --- | :---- |
+| :----------: | :---: | :---- |
 | スペード | 1 | このターン終了後追加でターンを得る。|
 | スペード | 2 | 手札が7枚になるようにカードをドローする。|
 | スペード | 3 | デッキの中からカードを1枚選択し、手札に加える。|
