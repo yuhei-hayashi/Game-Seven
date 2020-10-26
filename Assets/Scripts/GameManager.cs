@@ -811,10 +811,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Heart8()
     {
-        EffectCanvas.SetActive(true);
-        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
-        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
-        StartCoroutine(CardSelect(()=>
+        if(enemyDeck.Count >= 2)
+        {
+            EffectCanvas.SetActive(true);
+            photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+            photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+            StartCoroutine(CardSelect(()=>
             {
                 int cardID = clickedCard.model.id;
                 photonView.RPC(nameof(SendDecktop),RpcTarget.Others,cardID);
@@ -823,16 +825,21 @@ public class GameManager : MonoBehaviourPunCallbacks
                 clickedCard = null;
                 if(Position == 0)
                 {
-                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[1].model.id);
+                    photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[1].model.id);
                 }
                 else
                 {
-                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[0].model.id);
+                    photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[0].model.id);
                 }
                 EffectFieldCardLost();
                 EffectCanvas.SetActive(false);
                 isEffect = false;
             }));
+        }
+        else
+        {
+            isEffect = false;
+        }
     }
 
     void Heart9()
