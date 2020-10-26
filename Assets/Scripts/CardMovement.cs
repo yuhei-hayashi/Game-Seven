@@ -51,7 +51,6 @@ public class CardMovement : MonoBehaviour , IDragHandler, IBeginDragHandler , IE
     public void OnPointerClick(PointerEventData eventData)
     {
         GameManager.instance.clickedCard = eventData.pointerDrag.GetComponent<CardController>();
-        Debug.Log(GameManager.instance.clickedCard.model.id);
     }
 
 }

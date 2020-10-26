@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] CardController handcardPrefab,
                                     fieldcardPrefab;
     [SerializeField] FieldController fieldPrefab;
-    [SerializeField] Transform playerHandTransform,
+        [SerializeField] Transform playerHandTransform,
                                enemyHandTransform,
                                redFieldTransform,
                                blackFieldTransform,
@@ -525,22 +525,29 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Spade3()
     {
-        EffectCanvas.SetActive(true);
         List<int> deck = playerDeck;
-        while(deck.Count > 0)
+        if(deck.Count)
         {
-            int cardID = deck[0];
-            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
-            deck.RemoveAt(0);
+            EffectCanvas.SetActive(true);
+            while(deck.Count > 0)
+            {
+                int cardID = deck[0];
+                CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+                deck.RemoveAt(0);
+            }
+            StartCoroutine(CardSelect(()=>
+            {
+                CardSearch();
+                returnDeck(playerDeck);
+                clickedCard = null;
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
         }
-        StartCoroutine(CardSelect(()=>
+        else
         {
-            CardSearch();
-            returnDeck(playerDeck);
-            clickedCard = null;
-            EffectCanvas.SetActive(false);
             isEffect = false;
-        }));
+        }
     }
 
     void Spade4()
@@ -576,66 +583,80 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Spade6()
     {
-        EffectCanvas.SetActive(true);
         List<int> deck = playerDeck;
-        int n = 0;
-        while(n < 2)
+        if(deck.Count >= 2)
         {
-            int cardID = deck[0];
-            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
-            deck.RemoveAt(0);
-            n++;
+            EffectCanvas.SetActive(true);
+            int n = 0;
+            while(n < 2)
+            {
+                int cardID = deck[0];
+                CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+                deck.RemoveAt(0);
+                n++;
+            }
+            StartCoroutine(CardSelect(()=>
+            {
+                deck.Insert(0,clickedCard.model.id);
+                int Position = clickedCard.transform.GetSiblingIndex();
+                CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+                clickedCard = null;
+                if(Position == 0)
+                {
+                    deck.Add(CardList[1].model.id);
+                }
+                else
+                {
+                    deck.Add(CardList[0].model.id);
+                }
+                EffectFieldCardLost();
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
         }
-        StartCoroutine(CardSelect(()=>
+        else
         {
-            deck.Insert(0,clickedCard.model.id);
-            int Position = clickedCard.transform.GetSiblingIndex();
-            CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
-            clickedCard = null;
-            if(Position == 0)
-            {
-                deck.Add(CardList[1].model.id);
-            }
-            else
-            {
-                deck.Add(CardList[0].model.id);
-            }
-            EffectFieldCardLost();
-            EffectCanvas.SetActive(false);
             isEffect = false;
-        }));
+        }
     }
 
     void Spade8()
     {
-        EffectCanvas.SetActive(true);
         List<int> deck = playerDeck;
-        int n = 0;
-        while(n < 2)
+        if(deck.Count >= 2)
         {
-            int cardID = deck[0];
-            CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
-            deck.RemoveAt(0);
-            n++;
+            EffectCanvas.SetActive(true);
+            int n = 0;
+            while(n < 2)
+            {
+                int cardID = deck[0];
+                CreateCard(cardID,EffectFieldTransform,PhotonNetwork.LocalPlayer.ActorNumber);
+                deck.RemoveAt(0);
+                n++;
+            }
+            StartCoroutine(CardSelect(()=>
+            {
+                deck.Insert(0,clickedCard.model.id);
+                int Position = clickedCard.transform.GetSiblingIndex();
+                CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
+                clickedCard = null;
+                if(Position == 0)
+                {
+                    deck.Add(CardList[1].model.id);
+                }
+                else
+                {
+                    deck.Add(CardList[0].model.id);
+                }
+                EffectFieldCardLost();
+                EffectCanvas.SetActive(false);
+                isEffect = false;
+            }));
         }
-        StartCoroutine(CardSelect(()=>
+        else
         {
-            deck.Insert(0,clickedCard.model.id);
-            int Position = clickedCard.transform.GetSiblingIndex();
-            CardController[] CardList = EffectFieldTransform.GetComponentsInChildren<CardController>();
-            clickedCard = null;
-            if(Position == 0)
-            {
-                deck.Add(CardList[1].model.id);
-            }
-            else
-            {
-                deck.Add(CardList[0].model.id);
-            }
-            EffectFieldCardLost();
-            EffectCanvas.SetActive(false);
             isEffect = false;
-        }));
+        }
     }
 
     void Spade9()
@@ -757,10 +778,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Heart6()
     {
-        EffectCanvas.SetActive(true);
-        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
-        photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
-        StartCoroutine(CardSelect(()=>
+        if(enemyDeck.Count >= 2)
+        {
+            EffectCanvas.SetActive(true);
+            photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+            photonView.RPC(nameof(DecktopSend),RpcTarget.Others);
+            StartCoroutine(CardSelect(()=>
             {
                 int cardID = clickedCard.model.id;
                 photonView.RPC(nameof(SendDecktop),RpcTarget.Others,cardID);
@@ -769,16 +792,21 @@ public class GameManager : MonoBehaviourPunCallbacks
                 clickedCard = null;
                 if(Position == 0)
                 {
-                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[1].model.id);
+                    photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[1].model.id);
                 }
                 else
                 {
-                photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[0].model.id);
+                    photonView.RPC(nameof(SendDeckbuttom),RpcTarget.Others,CardList[0].model.id);
                 }
                 EffectFieldCardLost();
                 EffectCanvas.SetActive(false);
                 isEffect = false;
             }));
+        }
+        else
+        {
+            isEffect = false;
+        }
     }
 
     void Heart8()
