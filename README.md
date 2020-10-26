@@ -40,7 +40,7 @@
 
 # カードの効果
 
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;マーク&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 数字 | 効果 |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;マーク&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 数字 | 効果 |
 | ---------- | --- | ---- |
 | スペード | 1 | このターン終了後追加でターンを得る。|
 | スペード | 2 | 手札が7枚になるようにカードをドローする。|
