@@ -526,7 +526,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Spade3()
     {
         List<int> deck = playerDeck;
-        if(deck.Count)
+        if(deck.Count >= 1)
         {
             EffectCanvas.SetActive(true);
             while(deck.Count > 0)
